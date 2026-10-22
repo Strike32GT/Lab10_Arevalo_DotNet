@@ -1,0 +1,69 @@
+@model IEnumerable<Hotel.Web.Models.Habitacion>
+@{
+    ViewData["Title"] = "Disponibilidad";
+    var ingreso = ViewBag.Ingreso as DateOnly?;
+    var salida = ViewBag.Salida as DateOnly?;
+    var noches = (int)(ViewBag.Noches ?? 0);
+}
+
+<h1>Disponibilidad</h1>
+
+<form asp-action="Disponibles" method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-md-3">
+        <label class="form-label" for="ingreso">Fecha de ingreso</label>
+        <input id="ingreso" name="ingreso" type="date" class="form-control"
+               value="@(ingreso?.ToString("yyyy-MM-dd"))" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" for="salida">Fecha de salida</label>
+        <input id="salida" name="salida" type="date" class="form-control"
+               value="@(salida?.ToString("yyyy-MM-dd"))" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-md-auto">
+        <button type="submit" class="btn btn-primary">Buscar disponibles</button>
+    </div>
+</form>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+@if (ingreso is null || salida is null)
+{
+    <div class="alert alert-info">Selecciona las fechas de ingreso y salida para ver las habitaciones libres.</div>
+}
+else if (noches > 0)
+{
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning">No hay habitaciones activas disponibles en ese rango de fechas.</div>
+    }
+    else
+    {
+        <p class="text-muted">@noches noche(s) para el rango seleccionado.</p>
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Tipo</th>
+                    <th>Piso</th>
+                    <th>Precio por noche</th>
+                    <th>Noches</th>
+                    <th>Total estimado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var habitacion in Model)
+                {
+                    var total = noches * habitacion.TipoHabitacion.Precio;
+                    <tr>
+                        <td>@habitacion.Numero</td>
+                        <td>@habitacion.TipoHabitacion.Nombre</td>
+                        <td>@habitacion.Piso</td>
+                        <td>@habitacion.TipoHabitacion.Precio.ToString("C")</td>
+                        <td>@noches</td>
+                        <td>@total.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

@@ -1,0 +1,31 @@
+@model Hotel.Web.Models.Habitacion
+@{
+    ViewData["Title"] = "Detalle de habitación";
+}
+
+<h1>Detalle de habitación</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">Número</dt>
+    <dd class="col-sm-9">@Model.Numero</dd>
+
+    <dt class="col-sm-3">Tipo</dt>
+    <dd class="col-sm-9">@Model.TipoHabitacion.Nombre</dd>
+
+    <dt class="col-sm-3">Descripción</dt>
+    <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.TipoHabitacion.Descripcion) ? "Sin descripción" : Model.TipoHabitacion.Descripcion)</dd>
+
+    <dt class="col-sm-3">Piso</dt>
+    <dd class="col-sm-9">@Model.Piso</dd>
+
+    <dt class="col-sm-3">Precio por noche</dt>
+    <dd class="col-sm-9">@Model.TipoHabitacion.Precio.ToString("C")</dd>
+
+    <dt class="col-sm-3">Estado</dt>
+    <dd class="col-sm-9">@(Model.Activo ? "Activa" : "Inactiva")</dd>
+</dl>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.HabitacionId" class="btn btn-primary">Editar</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver a la lista</a>
+</div>
